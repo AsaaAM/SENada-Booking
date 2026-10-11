@@ -1,0 +1,206 @@
+### Environment variables
+@baseUrl = http://localhost:3000/api
+@token = YOUR_TOKEN_HERE
+@adminToken = YOUR_ADMIN_TOKEN_HERE
+@userId = 2
+
+### AUTHENTICATION
+
+### Register (Valid)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "nama_lengkap": "Budi Santoso",
+  "email": "budi@email.com",
+  "password": "password123",
+  "no_hp": "08111111111"
+}
+
+### Register (Invalid - short password)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "nama_lengkap": "Budi Santoso",
+  "email": "budi2@email.com",
+  "password": "pass",
+  "no_hp": "08111111111"
+}
+
+### Login User
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "thedimitris@email.com",
+  "password": "password123"
+}
+# -> Copy token and replace YOUR_TOKEN_HERE
+
+### Login Admin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@senada.com",
+  "password": "password123"
+}
+# -> Copy token and replace YOUR_ADMIN_TOKEN_HERE
+
+
+### STUDIOS
+
+### Get All Studios
+GET {{baseUrl}}/studios
+
+### Get Studio by ID
+GET {{baseUrl}}/studios/1
+
+### Get Studio Schedules
+GET {{baseUrl}}/studios/1/schedules?tanggal=2026-10-06
+
+
+### BOOKINGS
+
+### Create Booking (Valid)
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "studio_id": 1,
+  "tanggal_booking": "2026-10-06",
+  "jam_mulai": "13:00:00",
+  "durasi": 2,
+  "metode_pembayaran": "QRIS",
+  "promo_kode": "NADABARU"
+}
+
+### Create Booking (Invalid - Double Booking - run this again)
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "studio_id": 1,
+  "tanggal_booking": "2026-10-06",
+  "jam_mulai": "13:00:00",
+  "durasi": 2,
+  "metode_pembayaran": "QRIS",
+  "promo_kode": "NADABARU"
+}
+
+### Create Booking (Invalid - Wrong Token)
+POST {{baseUrl}}/bookings
+Content-Type: application/json
+Authorization: Bearer wrongtoken
+
+{
+  "studio_id": 1,
+  "tanggal_booking": "2026-10-06",
+  "jam_mulai": "13:00:00",
+  "durasi": 2,
+  "metode_pembayaran": "QRIS"
+}
+
+### Get User Bookings
+GET {{baseUrl}}/bookings/user/{{userId}}
+Authorization: Bearer {{token}}
+
+### Get User Bookings (Invalid Access - trying to view user 1 with user 2 token)
+GET {{baseUrl}}/bookings/user/1
+Authorization: Bearer {{token}}
+
+
+### USERS
+
+### Get User Profile
+GET {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}
+
+
+### PROMOS
+
+### Validate Promo
+POST {{baseUrl}}/promos/validate
+Content-Type: application/json
+
+{
+  "kode": "NADABARU"
+}
+
+
+### ADMIN
+
+### Get All Bookings
+GET {{baseUrl}}/admin/bookings
+Authorization: Bearer {{adminToken}}
+
+### Approve Booking
+PUT {{baseUrl}}/admin/bookings/1/approve
+Authorization: Bearer {{adminToken}}
+
+### Reject Booking
+PUT {{baseUrl}}/admin/bookings/1/reject
+Authorization: Bearer {{adminToken}}
+
+### Create Schedule Slot
+POST {{baseUrl}}/admin/schedules
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "studio_id": 1,
+  "tanggal": "2026-10-07",
+  "jam_mulai": "09:00:00",
+  "status": "Tersedia"
+}
+
+### Delete Schedule Slot
+DELETE {{baseUrl}}/admin/schedules/1
+Authorization: Bearer {{adminToken}}
+
+### Create Studio
+POST {{baseUrl}}/studios
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "nama_studio": "Soundwave Studio",
+  "lokasi": "Jl. Kaliurang KM 5, Sleman, Yogyakarta",
+  "jarak_statis": 2.1,
+  "deskripsi": "Studio rekaman dan latihan musik dengan akustik ruangan profesional serta peralatan instrumen premium.",
+  "harga_per_jam": 90000,
+  "foto_url": "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04",
+  "jam_buka": "09:00:00",
+  "jam_tutup": "23:00:00",
+  "fasilitas": ["AC", "Drum", "Ampli", "Mixer", "Wi-Fi", "Mic"]
+}
+
+### Update Studio
+PUT {{baseUrl}}/studios/1
+Content-Type: application/json
+Authorization: Bearer {{adminToken}}
+
+{
+  "nama_studio": "Soundwave Studio Updated",
+  "lokasi": "Jl. Kaliurang KM 6, Sleman, Yogyakarta",
+  "harga_per_jam": 95000,
+  "jam_buka": "08:00:00",
+  "jam_tutup": "23:00:00",
+  "fasilitas": ["AC", "Drum", "Ampli Gitar", "Ampli Bass", "Mixer", "Wi-Fi"]
+}
+
+### Upload Studio Images (multipart/form-data)
+# POST {{baseUrl}}/studios/upload
+# Authorization: Bearer {{adminToken}}
+# Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+# (attach files with field name 'images')
+
+### Delete Studio
+DELETE {{baseUrl}}/studios/5
+Authorization: Bearer {{adminToken}}
+
+
+
